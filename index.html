@@ -1,83 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Random Direction Mouse Mover</title>
-    <style>
-      body {
-        margin: 0;
-        background: black;
-        overflow: hidden;
-      }
-      canvas {
-        display: block;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="canvas"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mouse Mover - Tight Lines</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
 
-    <script>
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      let width, height;
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
 
-      function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-      }
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
 
-      window.addEventListener('resize', resize);
-      resize();
+    window.addEventListener('resize', resize);
+    resize();
 
-      let offset = 0;
-      let dx = 2;
-      let dy = 2;
+    let offset = 0;
+    let dx = 2;
+    let dy = 2;
 
-      function randomDirection() {
-        const directions = [
-          [2, 2], // down-right
-          [-2, 2], // down-left
-          [2, -2], // up-right
-          [-2, -2], // up-left
-          [0, 3], // straight down
-          [3, 0], // straight right
-        ];
-        [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
-      }
+    function randomDirection() {
+      const directions = [
+        [2, 2],   // down-right
+        [-2, 2],  // down-left
+        [2, -2],  // up-right
+        [-2, -2], // up-left
+        [0, 3],   // down
+        [3, 0],   // right
+      ];
+      [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
+    }
 
-      // Change direction at random intervals (1.5 to 3.5 seconds)
-      function scheduleDirectionChange() {
-        randomDirection();
-        setTimeout(scheduleDirectionChange, 1500 + Math.random() * 2000);
-      }
+    function scheduleDirectionChange() {
+      randomDirection();
+      setTimeout(scheduleDirectionChange, 1500 + Math.random() * 2000);
+    }
 
-      scheduleDirectionChange();
+    scheduleDirectionChange();
 
-      function draw() {
-        offset += 1;
+    function draw() {
+      offset += 1;
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 1;
 
-        ctx.clearRect(0, 0, width, height);
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
+      const spacing = 5; // Much tighter lines
 
-        const spacing = 30;
-
-        for (let i = -height; i < width + height; i += spacing) {
-          ctx.beginPath();
-          ctx.moveTo(i + ((offset * dx) % spacing), 0);
-          ctx.lineTo(
-            i - height + ((offset * dx) % spacing) + (dy * height) / dx,
-            height
-          );
-          ctx.stroke();
-        }
-
-        requestAnimationFrame(draw);
+      for (let i = -height; i < width + height; i += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(i + (offset * dx) % spacing, 0);
+        ctx.lineTo(i - height + (offset * dx) % spacing + dy * height / dx, height);
+        ctx.stroke();
       }
 
-      draw();
-    </script>
-  </body>
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
 </html>
